@@ -115,7 +115,7 @@ impl Hand {
         for (i, card) in self.cards.into_iter().enumerate() {
             let mut matches: i32 = 0;
             for card_tmp in self.cards {
-                if card_tmp == card { matches += 1; }
+                if card_tmp == card || card_tmp == 1 { matches += 1; } //Wildcard can be anything
             }
             card_count[i] = matches;
         }
@@ -125,11 +125,22 @@ impl Hand {
             5 => self.hand_type = 7, //5 of a kind
             4 => self.hand_type = 6, //4 of a kind
             3 => {
-                if card_count[1] == 2 { self.hand_type = 5; } //Full House
+                //Wildcard can mess this up so make sure it don't...
+                //ex) KK3J3 -> 13333 = 3 kind w/part 1 logic, should be full house
+                //ex) KJ72J -> 22333 = Full house w/part 1 logic, should be 3 kind
+                //ex) K43J3 -> 12233 = 3 kind w/part 1 logic. This is fine, but want to highlight as I now change based on wildcard presence
+                if self.cards.contains(&1) {
+                    if card_count[1] == 3 && card_count[0] == 1 { self.hand_type = 5;} //Full house
+                    else { self.hand_type = 4; } //3 of a kind
+
+                } else if card_count[1] == 2 { self.hand_type = 5; } //Full house
                 else { self.hand_type = 4; } //3 of a kind
             },
             2 => {
-                if card_count[1] == 2 { self.hand_type = 3; } //2 pair
+                //Wildcard can mess this up so make sure it don't...
+                //ex) 23J45 -> 12222 = 2 pair w/part 1 logic, should be 1 pair
+
+                if card_count[1] == 2 && !self.cards.contains(&1) { self.hand_type = 3; } //2 pair, 
                 else { self.hand_type = 2; } //1 pair
             },
             1 => self.hand_type = 1, //High Card

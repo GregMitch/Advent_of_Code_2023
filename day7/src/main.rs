@@ -33,7 +33,7 @@ fn main() {
                 '8' => input_hand.cards[card_index] = 8,
                 '9' => input_hand.cards[card_index] = 9,
                 'T' => input_hand.cards[card_index] = 10,
-                'J' => input_hand.cards[card_index] = 11,
+                'J' => input_hand.cards[card_index] = 1, //Wildcard now
                 'Q' => input_hand.cards[card_index] = 12,
                 'K' => input_hand.cards[card_index] = 13,
                 'A' => input_hand.cards[card_index] = 14,
@@ -48,7 +48,6 @@ fn main() {
     }
 
     hands.sort();
-    println!("{:?}", hands);
     let mut res: i64 = 0;
     let mut tmp: i64 = 1;
     for hand in hands {
